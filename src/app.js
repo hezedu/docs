@@ -5,7 +5,7 @@ Vue.prototype.noopStop = function(e){
 }
 
 require('./css/style.scss');
-
+require('./lib/request');
 import router from './router';
 import Root from './page/root.vue';
 
