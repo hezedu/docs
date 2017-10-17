@@ -1,8 +1,8 @@
 <template lang="jade">
 #app
-  h1 hello world!
+  h1 Root
   hr
-  div {{data}}
+  router-view
 </template>
 <script>
 
@@ -14,20 +14,9 @@ export default {
     }
   },
   methods: {
-
-    getData(){
-      this.request({
-        url: '/router.json',
-        dataType: 'json',
-        success(data){
-          this.data = data;
-          console.log('data', data, typeof data)
-        }
-      })
-    }
   },
   created(){
-    this.getData();
+    //this.getData();
   }
 }
 </script>

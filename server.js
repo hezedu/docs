@@ -5,7 +5,7 @@ var path = require('path');
 var routerInit = require('./lib/router-init');
 var isPro = app.get('env') === 'production';
 
-var routerJSONCache = null;
+var routerDataCache = null;
 var gitLocalPath;
 function server(config){
   config = config || {};
@@ -23,7 +23,7 @@ function server(config){
       }else{
         app.use(CORS);
       }
-      app.get('/router.json', getRoutes);
+      app.get('/router.js', getRoutes);
       app.post('/webhookReceive', reloadRoutes);
       app.use('/projects', express.static(gitLocalPath));
       app.listen(port);
@@ -45,9 +45,10 @@ function generateRoutes(projectsDir, callback){
       if(err){
         return callback(err);
       }
-      routerJSONCache = JSON.stringify(result)
-      callback(null, routerJSONCache);
-      // res.send(routerJSONCache);
+      routerDataCache = JSON.stringify(result);
+      routerDataCache = 'var MD_FILE_TREE_DATA = ' + routerDataCache;
+      callback(null, routerDataCache);
+      // res.send(routerDataCache);
     })
   })
 }
@@ -63,7 +64,7 @@ function reloadRoutes(req, res, next){
 }
 
 function getRoutes(req, res){
-  res.send(routerJSONCache);
+  res.send(routerDataCache);
 }
 
 server({
