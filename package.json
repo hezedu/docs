@@ -11,9 +11,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server -d --history-api-fallback --hot --inline --progress --colors --port 4000",
+    "start_server": "supervisor -i node_modules,public,.git server.js",
     "pro": "node script/pro"
   },
   "dependencies": {
+    "sas": "^3.0.4",
     "vue-use-vuex": "^0.2.2"
   },
   "devDependencies": {

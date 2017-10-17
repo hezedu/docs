@@ -1,55 +1,62 @@
-var eStatic = require('express').static;
+var express = require('express');
+var app = express();
+var exec = require('child_process').exec;
 var path = require('path');
+var routerInit = require('./lib/router-init');
 
-const ROOT_URL = '/nodeMouduleStatic';
+var routerJSONCache = null;
+var gitLocalPath;
+function server(config){
+  config = config || {};
+  const port = config.port || 3000;
+  //const gitUrl = config.gitUrl;
+  gitLocalPath = config.gitLocalPath;
+  app.get('/router.json', getRoutes);
+  app.post('/webhookReceive', reloadRoutes);
 
-function getDir(moduleName){
-  var rPath = require.resolve(moduleName);
-  var splitStr = 'node_modules' + path.sep;
-  var i = rPath.indexOf(splitStr)  + splitStr.length;
-  var name = rPath.substr(i);
-  name = name.substr(0, name.indexOf(path.sep));
-  var dir = rPath.substr(0, i);
-  return dir + name;
+  console.log('初始化路由...');
+  generateRoutes(gitLocalPath, function(err){
+    if(err){
+      console.error('初始化路由失败.');
+    }else{
+      console.log('初始化路由成功.');
+      app.listen(port);
+      console.log('server listen', port);
+    }
+  });
+
 }
 
-function getVersion(dir){
-  return require(dir + '/package.json').version;
+function generateRoutes(projectsDir, callback){
+  exec('cd ' + projectsDir + ' && git pull', function(err){
+    if(err){
+      return callback(err);
+    }
+    routerInit(projectsDir, function(err, result){
+      if(err){
+        return callback(err);
+      }
+      routerJSONCache = JSON.stringify(result)
+      callback(null, routerJSONCache);
+      // res.send(routerJSONCache);
+    })
+  })
 }
 
-function _getOpts(name){
-  var dir = getDir(name);
-  var v = getVersion(dir);
-  return {
-    url: ROOT_URL + '/' + name + v,
-    fsDir: path.join(dir + '/dist')
-  }
+function reloadRoutes(req, res, next){
+  generateRoutes(gitLocalPath, function(err){
+    if(err){
+      return next(err);
+    }else{
+      res.send('ok');
+    }
+  });
 }
 
-// var bootstrapMainPath = require.resolve('bootstrap');
-// var
-// var v = path.resolve(bootstrapMainPath, '../../../package.json');
-// v = require(v).version;
-
-// const bootstrapPublicPath = '/nodeMouduleStatic/bootstrap' + v
-// var distDir = path.resolve(bootstrapMainPath, '../..');
-
-var DAY_TIME = 1000 * 60 * 60 * 24 //一天
-var MONTH_TIME  = DAY_TIME * 30 //一月
-var HALF_YEAR_TIME  = MONTH_TIME * 6; //半年
-var bootstrapOpts = _getOpts('bootstrap');
-var jqueryOpts = _getOpts('jquery');
-//var jqueryUiOpts = _getOpts('jquery-ui');
-function setup(app){
-  app.use(jqueryOpts.url , eStatic(jqueryOpts.fsDir, {maxAge:HALF_YEAR_TIME}));
-  app.use(bootstrapOpts.url , eStatic(bootstrapOpts.fsDir, {maxAge:HALF_YEAR_TIME}));
-  //app.use(jqueryUiOpts.url , eStatic(jqueryUiOpts.fsDir, {maxAge:HALF_YEAR_TIME}));
+function getRoutes(req, res){
+  res.send(routerJSONCache);
 }
 
-
-setup.nodeModuleStatic = {
-  jquery: jqueryOpts.url,
-  bootstrap: bootstrapOpts.url
-}
-
-module.exports = setup;
+server({
+  gitLocalPath: 'C:/Users/hello/work/Even_Bond.wiki'
+});
