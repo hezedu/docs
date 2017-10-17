@@ -3,16 +3,14 @@ var app = express();
 var exec = require('child_process').exec;
 var path = require('path');
 var routerInit = require('./lib/router-init');
+var isPro = app.get('env') === 'production';
 
 var routerJSONCache = null;
 var gitLocalPath;
 function server(config){
   config = config || {};
   const port = config.port || 3000;
-  //const gitUrl = config.gitUrl;
   gitLocalPath = config.gitLocalPath;
-  app.get('/router.json', getRoutes);
-  app.post('/webhookReceive', reloadRoutes);
 
   console.log('初始化路由...');
   generateRoutes(gitLocalPath, function(err){
@@ -20,13 +18,24 @@ function server(config){
       console.error('初始化路由失败.');
     }else{
       console.log('初始化路由成功.');
+      if(isPro){
+        app.use(express.static(path.join(__dirname, 'public')));
+      }else{
+        app.use(CORS);
+      }
+      app.get('/router.json', getRoutes);
+      app.post('/webhookReceive', reloadRoutes);
+      app.use('/projects', express.static(gitLocalPath));
       app.listen(port);
       console.log('server listen', port);
     }
   });
-
 }
 
+function CORS(req, res, next){
+  res.set('Access-Control-Allow-Origin', '*');
+  next();
+}
 function generateRoutes(projectsDir, callback){
   exec('cd ' + projectsDir + ' && git pull', function(err){
     if(err){

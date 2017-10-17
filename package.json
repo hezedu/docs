@@ -10,8 +10,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
     "start": "webpack-dev-server -d --history-api-fallback --hot --inline --progress --colors --port 4000",
-    "start_server": "supervisor -i node_modules,public,.git server.js",
+    "start_server": "supervisor -i node_modules,public,.git,src server.js",
     "pro": "node script/pro"
   },
   "dependencies": {
