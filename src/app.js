@@ -8,7 +8,6 @@ require('./css/style.scss');
 require('./lib/request');
 import router from './router';
 import Root from './page/root.vue';
-
 var app = new Vue({
   router,
   render: h => h(Root)

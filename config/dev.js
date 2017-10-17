@@ -5,7 +5,7 @@ var  conf = {
   baseUrl: '',    //网站基本url. 比如：https://hezedu.github.io/clear 的 /clear
   indexData: { //这里数据将会传给index.ejs。
 
-    API_ROOT: 'https://127.0.0.1:3000'
+    API_ROOT: '//127.0.0.1:3000'
   }
 };
 

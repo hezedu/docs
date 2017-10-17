@@ -1,8 +1,7 @@
 import $ from 'jquery';
 import Vue from 'vue';
 //import FileSaver from 'file-saver';
-import {noop} from 'lodash';
-
+function noop(){}
 // ************************* requset *************************
 
 const API_ROOT = window.SERVER_CONFIG.API_ROOT;
@@ -22,9 +21,9 @@ function httpErrorHandler(xhr){
   console.log(`http ${xhr.status} ${xhr.responseText}`);
 }
 
-function codeErrorHandler(data){
-  console.log('code:' + data.code + data.msg);
-}
+// function codeErrorHandler(data){
+//   console.log('code:' + data.code + data.msg);
+// }
 
 function omitEmpty(obj){ //过滤掉空的参数
   var obj2 = {};
@@ -67,19 +66,10 @@ function request(opts, beforeStop = noop, afterStop = noop){
   // opts.processData = false;
   // opts.data = JSON.stringify(opts.data);
   // opts.dataType = 'json';
-  const codeError = opts.codeError || codeErrorHandler;
-  const success = opts.success;
+  //const codeError = opts.codeError || codeErrorHandler;
+  const success = opts.success || noop;
   const complete = opts.complete;
   const error = opts.error || httpErrorHandler;
-  const success2 = function(data){
-    if(data.code === 0) {
-      if(data.DOWNLOAD_URL) return download(data.DOWNLOAD_URL);
-      success && success.call(self, data.data);
-    }else{
-      opts.onError();
-      codeError.call(self, data);
-    }
-  }
 
   //由于juqery的complete会在success之后执行，所以自已写了个让它在之前执行。
   opts.complete = function(xhr, status){
@@ -93,11 +83,7 @@ function request(opts, beforeStop = noop, afterStop = noop){
       opts.onError();
       error && error.call(self, xhr);
     }else{
-      if(!xhr.responseJSON){
-        success && success.call(self, xhr.responseText);
-      }else{
-        success2.call(self, xhr.responseJSON, status);
-      }
+      success.call(self, xhr.responseJSON || xhr.responseText);
     }
   }
 
