@@ -1,0 +1,55 @@
+<template lang="jade">
+#app.lr-h100
+  #main.lr-h100(@mousedown='handleMousedown')
+    ca-download(v-if='isSHowCaDownPage')
+    router-view(v-else)
+  contextmenu
+  fly-textarea
+  error
+</template>
+<script>
+import store from '../store-global';
+import Contextmenu from '__ROOT__/cmpt/contextmenu';
+import flyTextarea from '__ROOT__/cmpt/fly-textarea';
+import CaDownload from '__ROOT__/page/ca-download.vue';
+import Error from '__ROOT__/cmpt/error';
+export default {
+  components:{
+    CaDownload,
+    Contextmenu,
+    Error,
+    flyTextarea
+  },
+  data(){
+    return {
+      isRequest: false
+    }
+  },
+  computed: {
+    isSHowCaDownPage(){
+      return store.state.isSelfSigned && store.state.CADownloadedCount === 0
+    }
+    // ,
+    // CADownloadedCount(){
+    //   return store.state.CADownloadedCount
+    // }
+  },
+  methods:{
+    handleMousedown(){
+      store.commit('currTaskWindowUnFocus');
+    },
+    getData(){
+      this.apiGet('/touch', data => {
+        store.commit('set', data);
+      })
+    }
+  },
+  mounted(){
+    window.APP.$elMain = document.getElementById('main');
+  },
+  created(){
+    window.APP.$router = this.$router;
+    this.getData();
+  }
+}
+</script>

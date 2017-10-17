@@ -1,0 +1,9 @@
+/*.db
+/node_modules
+/dist/dev
+/dist/pro
+!/dist/pro/a_vendor_bundle.js
+/src/page/desk0drop.bak.vue
+/src/store/sess.js
+/src/store/user.js
+/src/cmpt/resizable.vue
