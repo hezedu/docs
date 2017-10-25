@@ -7,6 +7,8 @@ $topH : 50px;
 $leftWidth:200px;
 $leftAHeight:35px;
 *{margin: 0; padding: 0;box-sizing: border-box;}
+
+
 :global {
   html , body, .height100, .clear_app{height: 100%;}
   body{font-family: "Microsoft YaHei", "Hiragino Sans GB";line-height: 1.5; font-size: 16px}
@@ -25,7 +27,14 @@ $leftAHeight:35px;
     color:$midColor2;
     height: 35px;line-height: 35px;
   }
+
+  // new
+  // .clear-projects{
+  //    display: inline-block;padding: 10px 0;font-size: 16px;
+  // }
 }
+
+
 
 .btn{padding:5px 10px;cursor: pointer}
 .loginBox{width: 400px; height: 200px;margin:auto; position: absolute;
