@@ -67,6 +67,5 @@ function getRoutes(req, res){
   res.send(routerDataCache);
 }
 
-server({
-  gitLocalPath: 'C:/Users/hello/work/Even_Bond.wiki'
-});
+const config = require('./config');
+server(config);
