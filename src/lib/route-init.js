@@ -2,7 +2,7 @@ import TopLeftNav from '../cmpt/top_left_nav';
 import TopNav from '../cmpt/top_nav';
 import LeftNav from '../cmpt/left_nav';
 import Main from '../cmpt/main';
-const components = [TopLeftNav, TopNav, LeftNav];
+const components = [TopNav, LeftNav];
 // front-end
 function ite(result, rpath, depth){
   const arr = [];
@@ -27,6 +27,7 @@ function ite(result, rpath, depth){
   return arr;
 }
 
-export function initVueRouter(result){
-  return ite(result, '', 0);
+export function initVueRouter(result, rPath){
+  rPath = rPath || '';
+  return ite(result, rPath, 0);
 }
